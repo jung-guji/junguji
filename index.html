@@ -69,6 +69,20 @@
         .animate-entry {
             animation: slideInDown 0.4s ease-out forwards;
         }
+
+        /* 보안: 텍스트 드래그 및 선택 방지 (입력창 제외) */
+        body {
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+        input, textarea {
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
+        }
     </style>
 </head>
 <body class="flex flex-col md:flex-row h-screen text-black antialiased selection:bg-black selection:text-white">
@@ -425,6 +439,28 @@
             // Clear input fields
             nameInput.value = '';
             msgInput.value = '';
+        });
+
+        // --- 보안 스크립트 (소스 복사 및 개발자 도구 방지) ---
+        // 1. 마우스 우클릭 방지
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // 2. 이미지 마우스 드래그 방지
+        document.addEventListener('dragstart', e => {
+            if (e.target.nodeName === 'IMG') e.preventDefault();
+        });
+
+        // 3. 주요 단축키 차단 (F12, 소스보기, 개발자도구, 다른 이름으로 저장 등)
+        document.addEventListener('keydown', e => {
+            if (
+                e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
+                (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) || 
+                (e.metaKey && e.altKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
+                (e.metaKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))
+            ) {
+                e.preventDefault();
+            }
         });
     </script>
 </body>
